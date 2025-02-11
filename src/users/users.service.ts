@@ -90,7 +90,7 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.userModel.findOne({ where: {id}})
   }
 
   async updateRefreshToken(id: number, hashedRefreshToken: string | null){
@@ -99,7 +99,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.userModel.update(updateUserDto, { where: {id}})[1][0]
   }
 
   remove(id: number) {

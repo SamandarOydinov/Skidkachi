@@ -31,10 +31,23 @@ import { Photo } from './photo/models/photo.model';
 import { Region } from './region/models/region.model';
 import { SocialLink } from './social_link/models/social_link.model';
 import { StoreSocialLink } from './store_social_link/models/store_social_link.model';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { BotModule } from './bot/bot.module';
+import { BOT_NAME } from './app.constants';
+import { Address } from './bot/models/address.model';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
+    TelegrafModule.forRootAsync({
+      botName: BOT_NAME,
+      useFactory: () => ({
+        token: process.env.BOT_TOKEN || '12345',
+        middlewares: [],
+        include: [BotModule],
+      }),
+      
+    }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -57,6 +70,7 @@ import { StoreSocialLink } from './store_social_link/models/store_social_link.mo
         Region,
         SocialLink,
         StoreSocialLink,
+        Address,
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -78,6 +92,7 @@ import { StoreSocialLink } from './store_social_link/models/store_social_link.mo
     FavouritesModule,
     ReviewsModule,
     StoreSubscribeModule,
+    BotModule
   ],
   controllers: [],
   providers: [],
