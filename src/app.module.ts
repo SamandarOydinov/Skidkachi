@@ -35,6 +35,9 @@ import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from './bot/bot.module';
 import { BOT_NAME } from './app.constants';
 import { Address } from './bot/models/address.model';
+import { Cars } from './bot/models/cars.model';
+import { OtpModule } from './otp/otp.module';
+import { Otp } from './otp/models/otp.model';
 
 @Module({
   imports: [
@@ -46,7 +49,6 @@ import { Address } from './bot/models/address.model';
         middlewares: [],
         include: [BotModule],
       }),
-      
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -71,6 +73,8 @@ import { Address } from './bot/models/address.model';
         SocialLink,
         StoreSocialLink,
         Address,
+        Cars,
+        Otp,
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -92,7 +96,8 @@ import { Address } from './bot/models/address.model';
     FavouritesModule,
     ReviewsModule,
     StoreSubscribeModule,
-    BotModule
+    BotModule,
+    OtpModule,
   ],
   controllers: [],
   providers: [],

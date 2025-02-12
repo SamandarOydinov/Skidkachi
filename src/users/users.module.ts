@@ -5,9 +5,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { MailModule } from '../mail/mail.module';
 import { JwtModule } from '@nestjs/jwt';
+import { BotModule } from '../bot/bot.module';
+import { Otp } from '../otp/models/otp.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([User]), MailModule, JwtModule],
+  imports: [SequelizeModule.forFeature([User, Otp]), MailModule, JwtModule, BotModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService]

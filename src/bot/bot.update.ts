@@ -29,28 +29,31 @@ export class BotUpdate {
     await this.botService.onStop(ctx);
   }
 
+  @On('location')
+  async onLocation(@Ctx() ctx: Context) {
+    await this.botService.onLocation(ctx);
+  }
+
+  @On('photo')
+  async onPhoto(@Ctx() ctx: Context) {
+    await this.botService.onPhoto(ctx);
+  }
+
   @On('text')
   async onText(@Ctx() ctx: Context) {
     await this.botService.onText(ctx);
   }
-  @On('message')
-  async onmessage(@Ctx() ctx: Context) {
-    console.log('kutilmagan xatolik!');
-  }
+
+  // @On('message')
+  // async onMessage(@Ctx() ctx: Context) {
+  //   await this.botService.onText(ctx);
+  // }
 }
 //  @On("contact")
 //  async onStart(@Ctx() ctx: Context) {
 //     await this.botService.start(ctx);
 //   }
-//   @On("photo")
-//   async onPhoto(@Ctx() ctx: Context) {
-//     if ("photo" in ctx.message!) {
-//       console.log(ctx.message.photo);
-//       await ctx.replyWithPhoto(
-//         String(ctx.message.photo[ctx.message.photo.length - 1].file_id)
-//       );
-//     }
-//   }
+
 
 //   @On("document")
 //   async onDocument(@Ctx() ctx: Context) {
