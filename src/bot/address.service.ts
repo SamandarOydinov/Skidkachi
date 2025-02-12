@@ -6,6 +6,7 @@ import { BOT_NAME } from '../app.constants';
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Address } from './models/address.model';
 import { Cars } from './models/cars.model';
+import * as fs from 'fs';
 
 @Injectable()
 export class AddressService {
@@ -179,21 +180,22 @@ export class AddressService {
           where: { user_id, last_state: 'finish' },
         });
         carss.forEach(async (cars) => {
-          const buttons = [
+          await ctx.replyWithHTML(
+            `<b>Mashina nomi: </b> ${cars.name}\n<b>raqami:</b> ${cars.number}\n`,
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
                     {
-                      text: "Mashina haqida",
+                      text: "Mashina rasmini ko'rish",
                       callback_data: `car_${cars.id}`,
                     },
                     {
                       text: "Mashinani o'chirish",
                       callback_data: `cardel_${cars.id}`,
                     },
-                  ]
-          await ctx.replyWithHTML(
-            `<b>Mashina nomi: </b> ${cars.name}\n<b>raqami:</b> ${cars.number}\n`,
-            {
-              reply_markup: {
-                inline_keyboard: [buttons],
+                  ],
+                ],
               },
             },
           );
@@ -208,9 +210,13 @@ export class AddressService {
     try {
       const contextAction = ctx.callbackQuery!['data'];
       const carsId = contextAction.split('_')[1];
-      console.log(carsId);
       const cars = await this.carsModel.findByPk(carsId);
-      await ctx.reply(`name: ${cars?.name}\nbrandi: ${cars?.brand}\nraqami: ${cars?.number}`)
+      const imagePath = `${cars?.image}`;
+      if (fs.existsSync(imagePath)) {
+        await ctx.replyWithPhoto({ source: fs.createReadStream(imagePath) });
+      } else {
+        await ctx.reply('❌ Image not found.');
+      }
     } catch (error) {
       console.log('onClickCarsError: ', error);
     }
@@ -221,10 +227,9 @@ export class AddressService {
       const contextAction = ctx.callbackQuery!['data'];
       const carsId = contextAction.split('_')[1];
       const cars = await this.carsModel.findByPk(carsId);
-      const deletedCar = await this.carsModel.destroy({
+      const deletedCars = await this.carsModel.destroy({
         where: { id: carsId },
       });
-      await ctx.replyWithPhoto(String(cars?.image));
       await ctx.reply("ushbu yuqoridagi locatsiya o'chirildi!");
     } catch (error) {
       console.log('onClickCarsError: ', error);

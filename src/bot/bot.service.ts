@@ -187,9 +187,8 @@ export class BotService {
               const filePath = data.result.file_path;
               const fileUrl = `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${filePath}`;
 
-              const savePath = `./uploads/${Date.now()}.jpg`
-              
-              // Download and save the file
+              const savePath = `./uploads/${Date.now()}.jpg`;
+
               const writer = fs.createWriteStream(savePath);
               const response = await axios({
                 url: fileUrl,
@@ -199,18 +198,18 @@ export class BotService {
               response.data.pipe(writer);
 
               writer.on('finish', async () => {
-                await ctx.reply(`✅ Photo saved as: ${savePath}`);
+                await ctx.reply(`✅ Photo saved`);
               });
 
-              // cars.image = String(ctx.message.photo);
-              // cars.last_state = 'finish';
-              // await cars.save();
-              // await ctx.reply('siznig avtomobilingiz saqlandi', {
-              //   parse_mode: 'HTML',
-              //   ...Markup.keyboard([
-              //     ['Mening mashinalarim!', "Yangi mashina qo'shish!"],
-              //   ]).resize().oneTime(),
-              // });
+              cars.image = savePath;
+              cars.last_state = 'finish';
+              await cars.save();
+              await ctx.reply('siznig avtomobilingiz saqlandi', {
+                parse_mode: 'HTML',
+                ...Markup.keyboard([
+                  ['Mening mashinalarim!', "Yangi mashina qo'shish!"],
+                ]).resize().oneTime(),
+              });
             }
           }
         }
@@ -287,7 +286,7 @@ export class BotService {
             } else if (cars?.last_state == 'number') {
               console.log('rasm');
               const regex =
-                /^\d{2} (?:[A-Z] \d{3} [A-Z]{2}|\d{3} [A-Z]{3}|\d{4} [A-Z]{2})$/;
+                /^\d{2}(?:[A-Z]\d{3}[A-Z]{2}|\d{3}[A-Z]{3}|\d{4}[A-Z]{2})$/;
 
               if (regex.test(String(ctx.message.text).trim())) {
                 try {

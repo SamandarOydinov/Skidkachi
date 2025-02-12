@@ -57,7 +57,6 @@ export class AddressUpdate {
 
   @Action(/^car_+\d+/)
   async onClick(@Ctx() ctx: Context) {
-    console.log("salomlar");
     await this.addressService.onClickCars(ctx);
   }
 
