@@ -179,22 +179,21 @@ export class AddressService {
           where: { user_id, last_state: 'finish' },
         });
         carss.forEach(async (cars) => {
-          await ctx.replyWithHTML(
-            `<b>Mashina nomi: </b> ${cars.name}\n<b>raqami:</b> ${cars.number}\n`,
-            {
-              reply_markup: {
-                inline_keyboard: [
-                  [
+          const buttons = [
                     {
-                      text: "Mashina rasmini ko'rish",
+                      text: "Mashina haqida",
                       callback_data: `car_${cars.id}`,
                     },
                     {
                       text: "Mashinani o'chirish",
                       callback_data: `cardel_${cars.id}`,
                     },
-                  ],
-                ],
+                  ]
+          await ctx.replyWithHTML(
+            `<b>Mashina nomi: </b> ${cars.name}\n<b>raqami:</b> ${cars.number}\n`,
+            {
+              reply_markup: {
+                inline_keyboard: [buttons],
               },
             },
           );
@@ -211,7 +210,7 @@ export class AddressService {
       const carsId = contextAction.split('_')[1];
       console.log(carsId);
       const cars = await this.carsModel.findByPk(carsId);
-      await ctx.replyWithPhoto(String(cars?.image));
+      await ctx.reply(`name: ${cars?.name}\nbrandi: ${cars?.brand}\nraqami: ${cars?.number}`)
     } catch (error) {
       console.log('onClickCarsError: ', error);
     }
@@ -225,7 +224,7 @@ export class AddressService {
       const deletedCar = await this.carsModel.destroy({
         where: { id: carsId },
       });
-      await ctx.replyWithPhoto(String(cars?.image))
+      await ctx.replyWithPhoto(String(cars?.image));
       await ctx.reply("ushbu yuqoridagi locatsiya o'chirildi!");
     } catch (error) {
       console.log('onClickCarsError: ', error);

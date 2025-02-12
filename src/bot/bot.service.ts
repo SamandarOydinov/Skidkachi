@@ -6,6 +6,8 @@ import { BOT_NAME } from '../app.constants';
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Address } from './models/address.model';
 import { Cars } from './models/cars.model';
+import axios from 'axios';
+import * as fs from 'fs';
 
 @Injectable()
 export class BotService {
@@ -86,7 +88,11 @@ export class BotService {
               .oneTime(),
           });
         } else {
-          user.phone_number = ctx.message.contact.phone_number;
+          let phone = ctx.message.contact.phone_number;
+          if (phone[0] != '+') {
+            phone = '+' + phone;
+          }
+          user.phone_number = phone;
           user.status = true;
           await user.save();
           await ctx.reply(
@@ -166,33 +172,51 @@ export class BotService {
             ...Markup.keyboard([['/start']]).resize(),
           });
         } else {
-          await ctx.reply('hozir0');
-
           const cars = await this.carsModel.findOne({
             where: { user_id },
             order: [['id', 'DESC']],
           });
           if (cars && cars.last_state == 'image') {
             if ('photo' in ctx.message!) {
-              cars.image = String(ctx.message.photo);
-              cars.last_state = 'finish';
-              await cars.save();
-              await ctx.reply('siznig avtomobilingiz saqlandi', {
-                parse_mode: 'HTML',
-                ...Markup.keyboard([
-                  ['Mening mashinalarim!', "Yangi mashina qo'shish!"],
-                ]).resize(),
+              let photo = ctx.message.photo.pop();
+              const fileId = photo!.file_id;
+
+              const { data } = await axios.get(
+                `https://api.telegram.org/bot${process.env.BOT_TOKEN}/getFile?file_id=${fileId}`,
+              );
+              const filePath = data.result.file_path;
+              const fileUrl = `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${filePath}`;
+
+              const savePath = `./uploads/${Date.now()}.jpg`
+              
+              // Download and save the file
+              const writer = fs.createWriteStream(savePath);
+              const response = await axios({
+                url: fileUrl,
+                method: 'GET',
+                responseType: 'stream',
               });
-            } else {
-              await ctx.reply('hozir');
+              response.data.pipe(writer);
+
+              writer.on('finish', async () => {
+                await ctx.reply(`✅ Photo saved as: ${savePath}`);
+              });
+
+              // cars.image = String(ctx.message.photo);
+              // cars.last_state = 'finish';
+              // await cars.save();
+              // await ctx.reply('siznig avtomobilingiz saqlandi', {
+              //   parse_mode: 'HTML',
+              //   ...Markup.keyboard([
+              //     ['Mening mashinalarim!', "Yangi mashina qo'shish!"],
+              //   ]).resize().oneTime(),
+              // });
             }
-          } else {
-            await ctx.reply('hozir2');
           }
         }
       }
     } catch (error) {
-      console.log('OnLocationError: ', error);
+      console.log('OnLocationError: ', error.message);
     }
   }
 
@@ -295,7 +319,10 @@ export class BotService {
     }
   }
 
-  async sendOtp(phone_number: string, OTP: string): Promise<Boolean | undefined> {
+  async sendOtp(
+    phone_number: string,
+    OTP: string,
+  ): Promise<Boolean | undefined> {
     try {
       const user = await this.botModel.findOne({ where: { phone_number } });
       if (!user || !user.status) {
@@ -305,7 +332,7 @@ export class BotService {
         user.user_id!,
         `Verification Otp code: ${OTP}`,
       );
-       return true
+      return true;
     } catch (error) {
       console.log('send otp error: ', error);
     }
