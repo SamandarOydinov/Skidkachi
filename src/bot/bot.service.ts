@@ -21,8 +21,6 @@ export class BotService {
   async start(ctx: Context) {
     const user_id = ctx.from?.id;
     const user = await this.botModel.findByPk(user_id);
-    console.log(ctx.message);
-    console.log('user: ', user);
     if (!user) {
       await this.botModel.create({
         user_id,
@@ -65,6 +63,19 @@ export class BotService {
       );
     }
   }
+
+  // async admin_menu(ctx: Context, menu_text = `<b>Admin menyusi</b>`) {
+  //   try {
+  //     await ctx.reply(menu_text, {
+  //       parse_mode: 'HTML',
+  //       ...Markup.keyboard([['Mijozlar', 'Ustalar']])
+  //         .oneTime()
+  //         .resize(),
+  //     });
+  //   } catch (error) {
+  //     console.log('Admin menyusida xatolik', error);
+  //   }
+  // }
 
   async onContact(ctx: Context) {
     try {
@@ -208,7 +219,9 @@ export class BotService {
                 parse_mode: 'HTML',
                 ...Markup.keyboard([
                   ['Mening mashinalarim!', "Yangi mashina qo'shish!"],
-                ]).resize().oneTime(),
+                ])
+                  .resize()
+                  .oneTime(),
               });
             }
           }
@@ -321,7 +334,7 @@ export class BotService {
   async sendOtp(
     phone_number: string,
     OTP: string,
-  ): Promise<Boolean | undefined> {
+  ): Promise<boolean | undefined> {
     try {
       const user = await this.botModel.findOne({ where: { phone_number } });
       if (!user || !user.status) {
@@ -329,11 +342,11 @@ export class BotService {
       }
       await this.bot.telegram.sendMessage(
         user.user_id!,
-        `Verification Otp code: ${OTP}`,
+        `Verification OTP code:  ${OTP}`,
       );
       return true;
     } catch (error) {
-      console.log('send otp error: ', error);
+      console.log('sendotperror', error);
     }
   }
 }

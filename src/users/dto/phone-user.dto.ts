@@ -1,6 +1,6 @@
 import { IsPhoneNumber } from 'class-validator';
 
 export class PhoneUserDto {
-  @IsPhoneNumber('UZ')
+  // @IsPhoneNumber('UZ')
   phone: string;
 }

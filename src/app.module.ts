@@ -38,6 +38,7 @@ import { Address } from './bot/models/address.model';
 import { Cars } from './bot/models/cars.model';
 import { OtpModule } from './otp/otp.module';
 import { Otp } from './otp/models/otp.model';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -98,6 +99,7 @@ import { Otp } from './otp/models/otp.model';
     StoreSubscribeModule,
     BotModule,
     OtpModule,
+    SmsModule,
   ],
   controllers: [],
   providers: [],

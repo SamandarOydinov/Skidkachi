@@ -1,6 +1,6 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
 
-interface IAdmin {
+interface IAdminCreationAttr {
   name: string;
   email: string;
   login: string;
@@ -10,7 +10,7 @@ interface IAdmin {
 }
 
 @Table({ tableName: 'admin' })
-export class Admin extends Model<Admin, IAdmin> {
+export class Admin extends Model<Admin, IAdminCreationAttr> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,

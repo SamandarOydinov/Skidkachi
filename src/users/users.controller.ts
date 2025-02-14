@@ -24,6 +24,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  
   @Post("newOtp")
   newOtp(@Body() phoneUserDto: PhoneUserDto) {
     return this.usersService.newOtp(phoneUserDto);

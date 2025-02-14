@@ -7,6 +7,7 @@ import { Context, Markup, Telegraf } from 'telegraf';
 import { Address } from './models/address.model';
 import { Cars } from './models/cars.model';
 import * as fs from 'fs';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class AddressService {
@@ -19,6 +20,16 @@ export class AddressService {
 
   async onAddress(ctx: Context) {
     try {
+      await this.carsModel.destroy({
+        where: {
+          last_state: { [Op.ne]: 'finish' }, // "finish" bo'lmaganlarni o‘chirish
+        },
+      });
+      await this.addressModel.destroy({
+        where: {
+          last_state: { [Op.ne]: 'finish' }, // "finish" bo'lmaganlarni o‘chirish
+        },
+      });
       await ctx.reply(`Foydalanuvchi manzillari: `, {
         parse_mode: 'HTML',
         ...Markup.keyboard([
@@ -32,6 +43,16 @@ export class AddressService {
 
   async onCars(ctx: Context) {
     try {
+      await this.carsModel.destroy({
+        where: {
+          last_state: { [Op.ne]: 'finish' }, // "finish" bo'lmaganlarni o‘chirish
+        },
+      });
+      await this.addressModel.destroy({
+        where: {
+          last_state: { [Op.ne]: 'finish' }, // "finish" bo'lmaganlarni o‘chirish
+        },
+      });
       await ctx.reply(`Foydalanuvchi mashinalari: `, {
         parse_mode: 'HTML',
         ...Markup.keyboard([
